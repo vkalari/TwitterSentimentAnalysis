@@ -25,16 +25,25 @@ class StdOutListener(StreamListener):
     
     def on_data(self, data):
         client = MongoClient()
-        db = client.testdb
+        db = client.tweetdb
         datajson = json.loads(data)
-        db.iphonetweets.insert(datajson)
+        trimmed={}
+        trimmed['id'] =  datajson['id']
+        trimmed['created_at'] = datajson['created_at']
+        trimmed['text'] = datajson['text']
+        trimmed['location'] = datajson['user']['location']
+        trimmed['time_zone'] = datajson['user']['time_zone']
         
-        print data
+        
+        json_data = json.dumps(trimmed)
+        db.iphonetweets.insert(json.loads(json_data))
+        
+        print json_data
         with open('tweets.txt', 'a') as tf:
             tf.write(data)
         
         self.num_of_tweets = self.num_of_tweets + 1
-        if self.num_of_tweets <5:
+        if self.num_of_tweets <1:
             return True
         else:
             tf.close()
