@@ -2,8 +2,13 @@ from tweepy.streaming import StreamListener
 from tweepy import OAuthHandler
 from tweepy import Stream
 from pymongo import MongoClient
+from textblob import TextBlob
+import matplotlib.pyplot as plt
+from mpld3 import fig_to_d3
+import statistics
 import json
 import re
+
 
 access_token = "3166078670-kUTXvUAHyaddLaoWiibqT4aSYKhLAS2zy1I7pos"
 access_token_secret = "ZcOHVTe4PwdDCmjAdmwGfepyJWI6eXpRouCwHVvaPyFLi"
@@ -39,14 +44,14 @@ class StdOutListener(StreamListener):
         
         
         json_data = json.dumps(munged)
-        db.iphonetweets.insert(json.loads(json_data))
+        db.iphonetweets.insert_one(json.loads(json_data))
         
         print json_data
         with open('tweets.txt', 'a') as tf:
             tf.write(json_data)
         
         self.num_of_tweets = self.num_of_tweets + 1
-        if self.num_of_tweets <5:
+        if self.num_of_tweets <10:
             return True
         else:
             tf.close()
@@ -66,4 +71,40 @@ if __name__ == '__main__':
     stream = Stream(auth, l)
     stream.filter(track=['iphone'],languages=['en'])
     
+    
+    sum = 0.0
+    alist = []
+    positive = []
+    negative = []
+    neutral = []
+    client = MongoClient()
+    db = client.tweetdb
+    for iphonetweet in db.iphonetweets.find():
+        tweet = TextBlob(iphonetweet["text"])
+        alist.append(tweet.sentiment.polarity)
+        print tweet.sentiment.polarity
+        if tweet.sentiment.polarity>0:
+            positive.append(tweet.sentiment.polarity)
+        elif  tweet.sentiment.polarity<0:  
+            negative.append(tweet.sentiment.polarity)
+        else:
+            neutral.append(tweet.sentiment.polarity)
+        sum = sum + tweet.sentiment.polarity
+        
+    total = db.iphonetweets.count()  
+      
+    print "Mean:" , statistics.mean(alist)  
+    print "Median:" , statistics.median(alist)
+    print "Mode:" , statistics.mode(alist)
+    print "Standard deviation" , statistics.stdev(alist, xbar=None)
+    
+    
+    labels = ['Positive', 'Negative', 'Neutral']
+    colors = ['blue', 'white', 'yellow']
+    
+    sizes=[len(positive)/float(total), len(negative)/float(total), len(neutral)/float(total)]
+    print sizes
+    plt.pie(sizes, labels = labels, colors=colors, autopct='%1.1f%%', shadow=True)
+    plt.axis('equal')
+    plt.show()
     
