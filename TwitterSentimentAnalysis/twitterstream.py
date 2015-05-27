@@ -17,6 +17,10 @@ from pytagcloud.lang.counter import get_tag_counts
 import operator
 import obo
 import webbrowser
+import random
+from random import randrange
+from textblob.en import positive
+
 
 access_token = "3166078670-kUTXvUAHyaddLaoWiibqT4aSYKhLAS2zy1I7pos"
 access_token_secret = "ZcOHVTe4PwdDCmjAdmwGfepyJWI6eXpRouCwHVvaPyFLi"
@@ -90,6 +94,11 @@ if __name__ == '__main__':
     stop_words = [line.strip() for line in f]
     tweets_words = ['iphone', 'iPhone', 'amp']
     alist = []
+    tweets = []
+    horrible = []
+    bad = []
+    awesome = []
+    good = []
     positive = []
     negative = []
     neutral = []
@@ -99,13 +108,22 @@ if __name__ == '__main__':
         tweet = TextBlob(iphonetweet["text"])
         sum1 = sum1 + tweet.word_counts['screen']
         if tweet.sentiment.subjectivity != 0.0:
+            tweets.append(iphonetweet["text"])
             important_words = iphonetweet['text'].lower()
             my_text += important_words
             alist.append(tweet.sentiment.polarity)
         if tweet.sentiment.polarity>0:
             positive.append(tweet.sentiment.polarity)
+            if tweet.sentiment.polarity<0.5:
+                good.append(tweet.sentiment.polarity)
+            else:
+                awesome.append(tweet.sentiment.polarity)   
         elif  tweet.sentiment.polarity<0: 
             negative.append(tweet.sentiment.polarity)
+            if tweet.sentiment.polarity> -0.5:
+                bad.append(tweet.sentiment.polarity)
+            else:
+                horrible.append(tweet.sentiment.polarity)
         else:
             neutral.append(tweet.sentiment.polarity)
     total= len(alist)
@@ -124,7 +142,15 @@ if __name__ == '__main__':
     tags = make_tags(final, maxsize=max_word_size)
     create_tag_image(tags, 'cloud_large.png', size=(width, height), layout=layout, fontname='Lobster', background = background_color)
     
+    mean = statistics.mean(alist)
+    mode = statistics.mode(alist)
+    median = statistics.median(alist)
+    standard_deviation = statistics.stdev(alist, xbar=None)
     
+    print "mean: " + str(mean)
+    print "mode: " + str(mode)
+    print "median: " + str(median)
+    print "standatd_deviation: " + str(standard_deviation)
     
     people = ('Positive', 'Negative', 'Neutral')
     y_pos = np.arange(len(people))
@@ -136,6 +162,8 @@ if __name__ == '__main__':
     savefig('barchart.png')
     
     plt.clf()
+    
+    
     labels = ['Positive', 'Negative', 'Neutral']
     colors = ['blue', 'green', 'yellow']
    
@@ -144,35 +172,146 @@ if __name__ == '__main__':
     plt.axis('equal')
     savefig('piechart.png') 
    
-        
+     
    
     f = open('Output.html','w')
 
-    message = """<html lang="en">
+    message = """<!DOCTYPE html>
+<html lang="en">
 <head>
-<title>Sentiment Analysis</title>
+<title>Twitter Sentiment Analysis</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet"
+    href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+<script
+    src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script
+    src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+    <style>
+   
+    
+
+    
+
+
+    </style>
 </head>
+
 <body>
-Twitter Sentiment Analysis
-<br />
-<h1>0.226129100117</h1>
-<img src="barchart.png" alt="Fantastic!" width="400" height="400" border="2" />
-<img src="piechart.png" alt="Fantastic!" width="500" height="400" border="2" />
-<img src="cloud_large.png" alt="Fantastic!" width="400" height="400" border = "2"/>
-<br />
-<img src="1.png" alt="Fantastic!" width="30" height="30" />
-<br />
-<img src="2.png" alt="Fantastic!" width="30" height="30" />
-<br />
-<img src="3.png" alt="Fantastic!" width="30" height="30" />
-<br />
-<img src="4.png" alt="Fantastic!" width="30" height="30" />
-<br />
-<img src="5.png" alt="Fantastic!" width="30" height="30" />
-<br />
-<h2>409</h2>
-<h2>27.0</h2>
-This is the end.
+
+    <nav class="navbar navbar-inverse">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#">Twitter Sentiment Analysis</a>
+            </div>
+        </div>
+    </nav>
+    <div class="container-fluid">
+        <div class="row">
+        <div class="col-lg-4">
+        <h2>Top 10 tweets</h2>
+            <ul class="list-group">
+        <li class="list-group-item">""" + tweets[randrange(0,len(tweets)-1)]+"""</li>
+        <li class="list-group-item">""" + tweets[randrange(0,len(tweets)-1)]+"""</li>
+        <li class="list-group-item">""" + tweets[randrange(0,len(tweets)-1)]+"""</li>
+        <li class="list-group-item">""" + tweets[randrange(0,len(tweets)-1)]+"""</li>
+        <li class="list-group-item">""" + tweets[randrange(0,len(tweets)-1)]+"""</li>
+        <li class="list-group-item">""" + tweets[randrange(0,len(tweets)-1)]+"""</li>
+        <li class="list-group-item">""" + tweets[randrange(0,len(tweets)-1)]+"""</li>
+        <li class="list-group-item">""" + tweets[randrange(0,len(tweets)-1)]+"""</li>
+        <li class="list-group-item">""" + tweets[randrange(0,len(tweets)-1)]+"""</li>
+        <li class="list-group-item">""" + tweets[randrange(0,len(tweets)-1)]+"""</li>
+            </ul>
+        </div>
+        <div class="col-lg-4">
+            <img src="barchart.png" class="img-responsive">
+            </div>
+            <div class="col-lg-2">
+            
+            </div>
+            <div class="col-lg-2" style="height:50px;">
+                <ul class="list-group list-special">
+                    <li class="list-group-item row">
+                    <div class="col-md-6">
+                    <img src="iphone.png">
+                    </div>
+                    <div class="col-md-6">
+                    </br>
+                    </br>
+                    <h4>Iphone</h4>
+                    </div>
+                    </li>
+                    <li class="list-group-item row">
+                    <div class="col-md-6">
+                    <img src="twitter_bird.png">
+                    </div>
+                    <div class="col-md-6">
+                    </br>
+                    </br>
+                    <h4>""" + str(db.iphonetweets.count()) + """</h4>
+                    </div>
+                    </li>
+                    <li class="list-group-item row">
+                    <div class="col-md-6">
+                    <img src="5.jpg">
+                    </div>
+                    <div class="col-md-6">
+                    </br>
+                    </br>
+                    <h4>""" + str(len(horrible)) + """</h4>
+                    </div>
+                    </li>
+                    <li class="list-group-item row">
+                    <div class="col-md-6">
+                    <img src="4.jpg">
+                    </div>
+                    <div class="col-md-6">
+                    </br>
+                    </br>
+                    <h4>""" + str(len(bad)) + """</h4>
+                    </div>
+                    </li>
+                    <li class="list-group-item row">
+                    <div class="col-md-6">
+                    <img src="3.jpg">
+                    </div>
+                    <div class="col-md-6">
+                    </br>
+                    </br>
+                    <h4>""" + str(len(neutral)) + """</h4>
+                    </div>
+                    </li>
+                    <li class="list-group-item row">
+                    <div class="col-md-6">
+                    <img src="2.jpg">
+                    </div>
+                    <div class="col-md-6">
+                    </br>
+                    </br>
+                    <h4>""" + str(len(good)) + """</h4>
+                    </div>
+                    </li>
+                    <li class="list-group-item row">
+                    <div class="col-md-6">
+                    <img src="1.jpg">
+                    </div>
+                    <div class="col-md-6">
+                    </br>
+                    </br>
+                    <h4>""" + str(len(awesome)) + """</h4>
+                    </div>
+                    </li>  
+                    </ul>
+                </div>
+           
+            </div>
+            <div class="row">
+            <div class="col-lg-4">
+            <img src="cloud_large.png" class="img-responsive">
+            </div>
+            </div>
+    </div>
 </body>
 </html>"""
 
