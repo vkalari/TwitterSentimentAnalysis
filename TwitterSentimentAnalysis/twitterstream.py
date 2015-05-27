@@ -152,6 +152,17 @@ if __name__ == '__main__':
     print "median: " + str(median)
     print "standatd_deviation: " + str(standard_deviation)
     
+    if 0<mean<0.5:
+        img = """<img src="2.jpg">"""
+    elif 0.5<=mean<1:
+        img = """<img src="1.jpg">"""
+    elif mean ==0:
+        img = """<img src="3.jpg">"""
+    elif -0.5<mean<0:
+        img = """<img src="4.jpg">"""
+    else:
+        img = """<img src="5.jpg">"""  
+                
     people = ('Positive', 'Negative', 'Neutral')
     y_pos = np.arange(len(people))
     sizes=[len(positive)/float(total), len(negative)/float(total), len(neutral)/float(total)]
@@ -189,12 +200,6 @@ if __name__ == '__main__':
 <script
     src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
     <style>
-   
-    
-
-    
-
-
     </style>
 </head>
 
@@ -225,7 +230,9 @@ if __name__ == '__main__':
             </ul>
         </div>
         <div class="col-lg-4">
+            
             <img src="barchart.png" class="img-responsive">
+            
             </div>
             <div class="col-lg-2">
             
@@ -301,6 +308,15 @@ if __name__ == '__main__':
                     </br>
                     <h4>""" + str(len(awesome)) + """</h4>
                     </div>
+                    </li>
+                    <li class="list-group-item row">
+                    <div class="col-md-6">"""+ img +"""
+                    </div>
+                    <div class="col-md-6">
+                    </br>
+                    </br>
+                    <h4>Mean</h4>
+                    </div>
                     </li>  
                     </ul>
                 </div>
@@ -308,7 +324,10 @@ if __name__ == '__main__':
             </div>
             <div class="row">
             <div class="col-lg-4">
-            <img src="cloud_large.png" class="img-responsive">
+             <img src="piechart.png" class="img-responsive">
+            </div>
+            <div class="col-lg-4">
+             <img src="cloud_large.png" class="img-responsive">
             </div>
             </div>
     </div>
