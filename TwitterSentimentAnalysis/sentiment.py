@@ -367,7 +367,11 @@ if __name__ == '__main__':
             <div class="col-lg-4">
             <img src="cloud_large.png" class="img-responsive">
             </div>
-
+            
+            <div class="row">
+            <div class="col-lg-4">
+            <img src="details.png" class="img-responsive">
+            </div>
 
             </div>
     </div>
