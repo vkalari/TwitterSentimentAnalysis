@@ -170,6 +170,7 @@ if __name__ == '__main__':
     print "standatd_deviation: " + str(standard_deviation)
     
 <<<<<<< HEAD
+<<<<<<< HEAD
     if 0<mean<0.5:
         rating = "Good"
     elif 0.5<=mean<1:
@@ -182,6 +183,8 @@ if __name__ == '__main__':
         rating = "Horrible!"  
         
         
+=======
+>>>>>>> origin/master
 =======
 >>>>>>> origin/master
     people = ('Positive', 'Negative', 'Neutral')
@@ -285,16 +288,22 @@ if __name__ == '__main__':
     src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
     <style>
 <<<<<<< HEAD
+<<<<<<< HEAD
       
 
       
 =======
+=======
+>>>>>>> origin/master
    
     
 
     
 
 
+<<<<<<< HEAD
+>>>>>>> origin/master
+=======
 >>>>>>> origin/master
     </style>
 </head>
@@ -331,6 +340,9 @@ if __name__ == '__main__':
 =======
         <div class="col-lg-4">
             <img src="statistic.png" class="img-responsive">
+<<<<<<< HEAD
+>>>>>>> origin/master
+=======
 >>>>>>> origin/master
             <img src="barchart.png" class="img-responsive">
             </div>
@@ -418,8 +430,11 @@ if __name__ == '__main__':
                     <h4>""" + str(len(awesome)) + """</h4>
                     </div>
 <<<<<<< HEAD
+<<<<<<< HEAD
                     </li>
 =======
+=======
+>>>>>>> origin/master
                     </li>  
 >>>>>>> origin/master
                     </ul>
@@ -435,6 +450,9 @@ if __name__ == '__main__':
 =======
             <div class="col-lg-4">
             <img src="cloud_large.png" class="img-responsive">
+<<<<<<< HEAD
+>>>>>>> origin/master
+=======
 >>>>>>> origin/master
             </div>
 
@@ -443,9 +461,15 @@ if __name__ == '__main__':
             <img src="details.png" class="img-responsive">
             </div>
 <<<<<<< HEAD
+<<<<<<< HEAD
             <div class="col-lg-3">
              <img src="statistic.png" class="img-responsive">
             </div>
+=======
+
+
+
+>>>>>>> origin/master
 =======
 
 
