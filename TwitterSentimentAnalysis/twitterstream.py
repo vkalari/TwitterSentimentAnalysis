@@ -64,7 +64,7 @@ class StdOutListener(StreamListener):
             tf.write(json_data)
            
         self.num_of_tweets = self.num_of_tweets + 1
-        if self.num_of_tweets <100:
+        if self.num_of_tweets <5:
             return True
         else:
             tf.close()
@@ -169,8 +169,6 @@ if __name__ == '__main__':
     print "median: " + str(median)
     print "standatd_deviation: " + str(standard_deviation)
     
-<<<<<<< HEAD
-<<<<<<< HEAD
     if 0<mean<0.5:
         rating = "Good"
     elif 0.5<=mean<1:
@@ -183,10 +181,6 @@ if __name__ == '__main__':
         rating = "Horrible!"  
         
         
-=======
->>>>>>> origin/master
-=======
->>>>>>> origin/master
     people = ('Positive', 'Negative', 'Neutral')
     y_pos = np.arange(len(people))
     sizes=[len(positive)/float(total), len(negative)/float(total), len(neutral)/float(total)]
@@ -287,24 +281,7 @@ if __name__ == '__main__':
 <script
     src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
     <style>
-<<<<<<< HEAD
-<<<<<<< HEAD
-      
-
-      
-=======
-=======
->>>>>>> origin/master
-   
-    
-
-    
-
-
-<<<<<<< HEAD
->>>>>>> origin/master
-=======
->>>>>>> origin/master
+ 
     </style>
 </head>
 
@@ -334,17 +311,10 @@ if __name__ == '__main__':
         <li class="list-group-item">""" + tweets[9]+"""</li>
             </ul>
         </div>
-<<<<<<< HEAD
         <div class="col-lg-3">
            
-=======
-        <div class="col-lg-4">
-            <img src="statistic.png" class="img-responsive">
-<<<<<<< HEAD
->>>>>>> origin/master
-=======
->>>>>>> origin/master
             <img src="barchart.png" class="img-responsive">
+            
             </div>
             <div class="col-lg-3">
             <img src="details.png" class="img-responsive">
@@ -377,7 +347,7 @@ if __name__ == '__main__':
                     <div class="col-md-6">
                     </br>
                     </br>
-                    <h4>""" + str(db.iphonetweets.count()) + """</h4>
+                    <h4>""" + str(len(alist)) + """</h4>
                     </div>
                     </li>
                     <li class="list-group-item row">
@@ -429,52 +399,23 @@ if __name__ == '__main__':
                     </br>
                     <h4>""" + str(len(awesome)) + """</h4>
                     </div>
-<<<<<<< HEAD
-<<<<<<< HEAD
                     </li>
-=======
-=======
->>>>>>> origin/master
-                    </li>  
->>>>>>> origin/master
                     </ul>
                 </div>
            
             </div>
             <div class="row">
-<<<<<<< HEAD
             <div class="col-lg-3">
              
-            <img src="piechart.png" class="img-responsive">
+             <img src="piechart.png" class="img-responsive">
              
-=======
-            <div class="col-lg-4">
-            <img src="cloud_large.png" class="img-responsive">
-<<<<<<< HEAD
->>>>>>> origin/master
-=======
->>>>>>> origin/master
             </div>
-
-            <div class="row">
             <div class="col-lg-4">
-            <img src="details.png" class="img-responsive">
+             <img src="cloud_large.png" class="img-responsive">
             </div>
-<<<<<<< HEAD
-<<<<<<< HEAD
             <div class="col-lg-3">
              <img src="statistic.png" class="img-responsive">
             </div>
-=======
-
-
-
->>>>>>> origin/master
-=======
-
-
-
->>>>>>> origin/master
             </div>
     </div>
 </body>
