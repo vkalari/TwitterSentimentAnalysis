@@ -46,13 +46,14 @@ class StdOutListener(StreamListener):
         db = client.tweetdb
         datajson = json.loads(data)
        
-        x =  datajson['text']
-        munged={}
-        munged['id'] =  datajson['id']
-        munged['created_at'] = datajson['created_at']
-        munged['text'] = ' '.join(re.sub("(@[A-Za-z0-9]+)|([^0-9A-Za-z \t])|(\w+:\/\/\S+)"," ",x).split())
-        munged['location'] = datajson['user']['location']
-        munged['time_zone'] = datajson['user']['time_zone']
+        if datajson['text'] != None:
+            x =  datajson['text']
+            munged={}
+            munged['id'] =  datajson['id']
+            munged['created_at'] = datajson['created_at']
+            munged['text'] = ' '.join(re.sub("(@[A-Za-z0-9]+)|([^0-9A-Za-z \t])|(\w+:\/\/\S+)"," ",x).split())
+            munged['location'] = datajson['user']['location']
+            munged['time_zone'] = datajson['user']['time_zone']
        
        
         json_data = json.dumps(munged)
@@ -102,6 +103,9 @@ if __name__ == '__main__':
     positive = []
     negative = []
     neutral = []
+    tecPositive = {'screen':0,'wifi':0,'camera':0,'ios':0,'bluetooth':0,'16gb':0,'iphonegames':0,'5c':0,'5s':0}
+    tecNegative = {'screen':0,'wifi':0,'camera':0,'ios':0,'bluetooth':0,'16gb':0,'iphonegames':0,'5c':0,'5s':0}
+    tecLabels = ['screen','wifi','camera','ios','bluetooth','16gb','iphonegames','5c','5s']
     client = MongoClient()
     db = client.tweetdb
     for iphonetweet in db.iphonetweets.find():
@@ -112,21 +116,34 @@ if __name__ == '__main__':
             important_words = iphonetweet['text'].lower()
             my_text += important_words
             alist.append(tweet.sentiment.polarity)
-        if tweet.sentiment.polarity>0:
-            positive.append(tweet.sentiment.polarity)
-            if tweet.sentiment.polarity<0.5:
-                good.append(tweet.sentiment.polarity)
+            if tweet.sentiment.polarity>0:
+
+                for word in tecLabels:
+                    if tweet.word_counts[word]>0:
+                        tecPositive[word] = tecPositive[word]+1
+                
+                positive.append(tweet.sentiment.polarity)
+                if tweet.sentiment.polarity<0.5:
+                    good.append(tweet.sentiment.polarity)
+                else:
+                    awesome.append(tweet.sentiment.polarity)   
+            elif  tweet.sentiment.polarity<0:
+
+                for word in tecLabels:
+                    if tweet.word_counts[word]>0:
+                        tecNegative[word] = tecNegative[word]+1
+                
+                negative.append(tweet.sentiment.polarity)
+                if tweet.sentiment.polarity> -0.5:
+                    bad.append(tweet.sentiment.polarity)
+                else:
+                    horrible.append(tweet.sentiment.polarity)
             else:
-                awesome.append(tweet.sentiment.polarity)   
-        elif  tweet.sentiment.polarity<0: 
-            negative.append(tweet.sentiment.polarity)
-            if tweet.sentiment.polarity> -0.5:
-                bad.append(tweet.sentiment.polarity)
-            else:
-                horrible.append(tweet.sentiment.polarity)
-        else:
-            neutral.append(tweet.sentiment.polarity)
+                neutral.append(tweet.sentiment.polarity)
     total= len(alist)
+
+    print tecPositive
+    print tecNegative
    
     words = my_text.split()
     counts = Counter(words)
@@ -135,7 +152,7 @@ if __name__ == '__main__':
     for word in tweets_words:
         del counts[word]
         
-    print counts
+
     final = counts.most_common(max_words)
     max_count = max(final, key=operator.itemgetter(1))[1]
     final = [(name, count / float(max_count))for name, count in final]
@@ -153,16 +170,17 @@ if __name__ == '__main__':
     print "standatd_deviation: " + str(standard_deviation)
     
     if 0<mean<0.5:
-        img = """<img src="2.jpg">"""
+        rating = "Good"
     elif 0.5<=mean<1:
-        img = """<img src="1.jpg">"""
+        rating = "Excellent!"
     elif mean ==0:
-        img = """<img src="3.jpg">"""
+        rating = "Ok"
     elif -0.5<mean<0:
-        img = """<img src="4.jpg">"""
+        rating = "Bad"
     else:
-        img = """<img src="5.jpg">"""  
-                
+        rating = "Horrible!"  
+        
+        
     people = ('Positive', 'Negative', 'Neutral')
     y_pos = np.arange(len(people))
     sizes=[len(positive)/float(total), len(negative)/float(total), len(neutral)/float(total)]
@@ -183,7 +201,70 @@ if __name__ == '__main__':
     plt.axis('equal')
     savefig('piechart.png') 
    
-     
+    plt.clf()
+
+    n_groups = 9
+    positives = []
+    negatives = []
+
+    for word in tecLabels:
+        total = tecPositive[word]+tecNegative[word]
+        if total == 0:
+            continue
+        positives.append(tecPositive[word]*100/total)
+        negatives.append(tecNegative[word]*100/total)
+
+
+    fig, ax = plt.subplots()
+
+    index = np.arange(n_groups)
+    bar_width = 0.35
+
+    opacity = 0.4
+    error_config = {'ecolor': '0.3'}
+
+    rects1 = plt.bar(index, positives, bar_width,
+                 alpha=opacity,
+                 color='b',
+                 error_kw=error_config,
+                 label='Positive')
+
+    rects2 = plt.bar(index + bar_width, negatives, bar_width,
+                 alpha=opacity,
+                 color='r',
+                 error_kw=error_config,
+                 label='Negative')
+
+    plt.ylabel('Sentiments')
+    plt.title('Technical Details')
+    plt.xticks(index + bar_width, tecLabels)
+    plt.legend()
+
+    plt.tight_layout()
+    
+    savefig('details.png')
+
+    plt.clf()
+
+    x = [-0.2,1.2]
+    y1 = [mean,mean]
+    y2 = [mode,mode]
+    y3 = [median,median]
+    y4 = [standard_deviation,standard_deviation]
+
+    x1 = np.random.rand(len(negative))
+    x2 = np.random.rand(len(neutral))
+    x3 = np.random.rand(len(positive))
+
+    plt.scatter(x1, negative, c='green', s=20)
+    plt.scatter(x2, neutral, c='black', s=20)
+    plt.scatter(x3, positive, c='red', s=20)
+    plt.plot(x,y1)
+    plt.plot(x,y2)
+    plt.plot(x,y3)
+    plt.plot(x,y4)
+    
+    savefig('statistic.png')
    
     f = open('Output.html','w')
 
@@ -200,6 +281,9 @@ if __name__ == '__main__':
 <script
     src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
     <style>
+      
+
+      
     </style>
 </head>
 
@@ -217,25 +301,25 @@ if __name__ == '__main__':
         <div class="col-lg-4">
         <h2>Top 10 tweets</h2>
             <ul class="list-group">
-        <li class="list-group-item">""" + tweets[randrange(0,len(tweets)-1)]+"""</li>
-        <li class="list-group-item">""" + tweets[randrange(0,len(tweets)-1)]+"""</li>
-        <li class="list-group-item">""" + tweets[randrange(0,len(tweets)-1)]+"""</li>
-        <li class="list-group-item">""" + tweets[randrange(0,len(tweets)-1)]+"""</li>
-        <li class="list-group-item">""" + tweets[randrange(0,len(tweets)-1)]+"""</li>
-        <li class="list-group-item">""" + tweets[randrange(0,len(tweets)-1)]+"""</li>
-        <li class="list-group-item">""" + tweets[randrange(0,len(tweets)-1)]+"""</li>
-        <li class="list-group-item">""" + tweets[randrange(0,len(tweets)-1)]+"""</li>
-        <li class="list-group-item">""" + tweets[randrange(0,len(tweets)-1)]+"""</li>
-        <li class="list-group-item">""" + tweets[randrange(0,len(tweets)-1)]+"""</li>
+        <li class="list-group-item">""" + tweets[0]+"""</li>
+        <li class="list-group-item">""" + tweets[1]+"""</li>
+        <li class="list-group-item">""" + tweets[2]+"""</li>
+        <li class="list-group-item">""" + tweets[3]+"""</li>
+        <li class="list-group-item">""" + tweets[4]+"""</li>
+        <li class="list-group-item">""" + tweets[5]+"""</li>
+        <li class="list-group-item">""" + tweets[6]+"""</li>
+        <li class="list-group-item">""" + tweets[7]+"""</li>
+        <li class="list-group-item">""" + tweets[8]+"""</li>
+        <li class="list-group-item">""" + tweets[9]+"""</li>
             </ul>
         </div>
-        <div class="col-lg-4">
-            
+        <div class="col-lg-3">
+           
             <img src="barchart.png" class="img-responsive">
             
             </div>
-            <div class="col-lg-2">
-            
+            <div class="col-lg-3">
+            <img src="details.png" class="img-responsive">
             </div>
             <div class="col-lg-2" style="height:50px;">
                 <ul class="list-group list-special">
@@ -247,6 +331,15 @@ if __name__ == '__main__':
                     </br>
                     </br>
                     <h4>Iphone</h4>
+                    </div>
+                    <li class="list-group-item row">
+                    <div class="col-md-6">
+                    <img src="rating.png">
+                    </div>
+                    <div class="col-md-6">
+                    </br>
+                    </br>
+                    <h4>"""+ rating + """</h4>
                     </div>
                     </li>
                     <li class="list-group-item row">
@@ -309,25 +402,21 @@ if __name__ == '__main__':
                     <h4>""" + str(len(awesome)) + """</h4>
                     </div>
                     </li>
-                    <li class="list-group-item row">
-                    <div class="col-md-6">"""+ img +"""
-                    </div>
-                    <div class="col-md-6">
-                    </br>
-                    </br>
-                    <h4>Mean</h4>
-                    </div>
-                    </li>  
                     </ul>
                 </div>
            
             </div>
             <div class="row">
-            <div class="col-lg-4">
-             <img src="piechart.png" class="img-responsive">
+            <div class="col-lg-3">
+             
+            <img src="piechart.png" class="img-responsive">
+             
             </div>
             <div class="col-lg-4">
              <img src="cloud_large.png" class="img-responsive">
+            </div>
+            <div class="col-lg-3">
+             <img src="statistic.png" class="img-responsive">
             </div>
             </div>
     </div>
