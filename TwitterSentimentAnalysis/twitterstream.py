@@ -16,8 +16,6 @@ from pytagcloud import create_tag_image, make_tags
 from pytagcloud.lang.counter import get_tag_counts
 import operator
 import obo
-import webbrowser
-import random
 from random import randrange
 from textblob.en import positive
 
@@ -46,19 +44,28 @@ class StdOutListener(StreamListener):
         db = client.tweetdb
         datajson = json.loads(data)
        
-        if datajson['text'] != None:
-            x =  datajson['text']
-            munged={}
-            munged['id'] =  datajson['id']
-            munged['created_at'] = datajson['created_at']
-            munged['text'] = ' '.join(re.sub("(@[A-Za-z0-9]+)|([^0-9A-Za-z \t])|(\w+:\/\/\S+)"," ",x).split())
-            munged['location'] = datajson['user']['location']
-            munged['time_zone'] = datajson['user']['time_zone']
+        
+        x =  datajson['text']
+            
+        munged={}
+        munged['id'] =  datajson['id']
+        munged['created_at'] = datajson['created_at']
+        
+        
+        str1 = ' '.join(re.sub("(@[A-Za-z0-9]+)|([^0-9A-Za-z \t])|(\w+:\/\/\S+)"," ",x).split())    
+        
+        regex = re.compile(r'RT', flags=re.IGNORECASE)
+        str2 = regex.sub('', str1)
+        
+        munged['text'] = str2.lstrip()
+        munged['location'] = datajson['user']['location']
+        munged['time_zone'] = datajson['user']['time_zone']
        
        
         json_data = json.dumps(munged)
         db.iphonetweets.insert_one(json.loads(json_data))
-        print json_data
+        
+        print munged['text']
        
         with open('tweets.txt', 'a') as tf:
             tf.write(json_data)
@@ -88,8 +95,6 @@ if __name__ == '__main__':
     background_color = (255, 255, 255)
     max_word_size = 80
     max_words = 180
-    width = 1280
-    height = 800
     my_text=''
     f = open('stopwords.txt', 'rb')
     stop_words = [line.strip() for line in f]
@@ -110,6 +115,7 @@ if __name__ == '__main__':
     db = client.tweetdb
     for iphonetweet in db.iphonetweets.find():
         tweet = TextBlob(iphonetweet["text"])
+        
         sum1 = sum1 + tweet.word_counts['screen']
         if tweet.sentiment.subjectivity != 0.0:
             tweets.append(iphonetweet["text"])
@@ -157,7 +163,7 @@ if __name__ == '__main__':
     max_count = max(final, key=operator.itemgetter(1))[1]
     final = [(name, count / float(max_count))for name, count in final]
     tags = make_tags(final, maxsize=max_word_size)
-    create_tag_image(tags, 'cloud_large.png', size=(width, height), layout=layout, fontname='Lobster', background = background_color)
+    create_tag_image(tags, 'cloud_large.png', size=(1280, 800), layout=layout, fontname='Lobster', background = background_color)
     
     mean = statistics.mean(alist)
     mode = statistics.mode(alist)
@@ -297,18 +303,18 @@ if __name__ == '__main__':
     <div class="container-fluid">
         <div class="row">
         <div class="col-lg-4">
-        <h2>Top 10 tweets</h2>
+        <h2>Latest tweets</h2>
             <ul class="list-group">
-        <li class="list-group-item">""" + tweets[0]+"""</li>
-        <li class="list-group-item">""" + tweets[1]+"""</li>
-        <li class="list-group-item">""" + tweets[2]+"""</li>
-        <li class="list-group-item">""" + tweets[3]+"""</li>
-        <li class="list-group-item">""" + tweets[4]+"""</li>
-        <li class="list-group-item">""" + tweets[5]+"""</li>
-        <li class="list-group-item">""" + tweets[6]+"""</li>
-        <li class="list-group-item">""" + tweets[7]+"""</li>
-        <li class="list-group-item">""" + tweets[8]+"""</li>
-        <li class="list-group-item">""" + tweets[9]+"""</li>
+        <li class="list-group-item">""" + tweets[len(tweets)-1]+"""</li>
+        <li class="list-group-item">""" + tweets[len(tweets)-2]+"""</li>
+        <li class="list-group-item">""" + tweets[len(tweets)-3]+"""</li>
+        <li class="list-group-item">""" + tweets[len(tweets)-4]+"""</li>
+        <li class="list-group-item">""" + tweets[len(tweets)-5]+"""</li>
+        <li class="list-group-item">""" + tweets[len(tweets)-6]+"""</li>
+        <li class="list-group-item">""" + tweets[len(tweets)-7]+"""</li>
+        <li class="list-group-item">""" + tweets[len(tweets)-8]+"""</li>
+        <li class="list-group-item">""" + tweets[len(tweets)-9]+"""</li>
+        <li class="list-group-item">""" + tweets[len(tweets)-10]+"""</li>
             </ul>
         </div>
         <div class="col-lg-3">
