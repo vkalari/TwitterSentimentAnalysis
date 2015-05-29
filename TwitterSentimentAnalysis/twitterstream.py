@@ -217,8 +217,8 @@ if __name__ == '__main__':
         total = tecPositive[word]+tecNegative[word]
         if total == 0:
             continue
-        positives.append(tecPositive[word]*100/total)
-        negatives.append(tecNegative[word]*100/total)
+        positives.append(round(tecPositive[word]*100/total))
+        negatives.append(round(tecNegative[word]*100/total))
 
 
     fig, ax = plt.subplots()
@@ -258,13 +258,17 @@ if __name__ == '__main__':
     y3 = [median,median]
     y4 = [standard_deviation,standard_deviation]
 
-    x1 = np.random.rand(len(negative))
-    x2 = np.random.rand(len(neutral))
-    x3 = np.random.rand(len(positive))
+    x1 = np.random.rand(len(awesome))
+    x2 = np.random.rand(len(good))
+    x3 = np.random.rand(len(neutral))
+    x4 = np.random.rand(len(bad))
+    x5 = np.random.rand(len(horrible))
 
-    plt.scatter(x1, negative, c='green', s=20)
-    plt.scatter(x2, neutral, c='black', s=20)
-    plt.scatter(x3, positive, c='red', s=20)
+    plt.scatter(x1, awesome, c='red', s=30)
+    plt.scatter(x2, good, c='orange', s=30)
+    plt.scatter(x3, neutral, c='green', s=30)
+    plt.scatter(x4, bad, c='gray', s=30)
+    plt.scatter(x5, horrible, c='black', s=30)
     plt.plot(x,y1)
     plt.plot(x,y2)
     plt.plot(x,y3)
