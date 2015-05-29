@@ -198,8 +198,8 @@ if __name__ == '__main__':
         total = tecPositive[word]+tecNegative[word]
         if total == 0:
             continue
-        positives.append(tecPositive[word]*100/total)
-        negatives.append(tecNegative[word]*100/total)
+        positives.append(round(tecPositive[word]*100/total))
+        negatives.append(round(tecNegative[word]*100/total))
 
 
     fig, ax = plt.subplots()
@@ -230,6 +230,32 @@ if __name__ == '__main__':
     plt.tight_layout()
     
     savefig('details.png')
+
+    plt.clf()
+
+    x = [-0.2,1.2]
+    y1 = [mean,mean]
+    y2 = [mode,mode]
+    y3 = [median,median]
+    y4 = [standard_deviation,standard_deviation]
+
+    x1 = np.random.rand(len(awesome))
+    x2 = np.random.rand(len(good))
+    x3 = np.random.rand(len(neutral))
+    x4 = np.random.rand(len(bad))
+    x5 = np.random.rand(len(horrible))
+
+    plt.scatter(x1, awesome, c='red', s=30)
+    plt.scatter(x2, good, c='orange', s=30)
+    plt.scatter(x3, neutral, c='green', s=30)
+    plt.scatter(x4, bad, c='gray', s=30)
+    plt.scatter(x5, horrible, c='black', s=30)
+    plt.plot(x,y1)
+    plt.plot(x,y2)
+    plt.plot(x,y3)
+    plt.plot(x,y4)
+    
+    savefig('statistic.png')
    
     f = open('Output.html','w')
 
@@ -282,6 +308,7 @@ if __name__ == '__main__':
             </ul>
         </div>
         <div class="col-lg-4">
+            <img src="statistic.png" class="img-responsive">
             <img src="barchart.png" class="img-responsive">
             </div>
             <div class="col-lg-2">
@@ -367,11 +394,13 @@ if __name__ == '__main__':
             <div class="col-lg-4">
             <img src="cloud_large.png" class="img-responsive">
             </div>
-            
+
             <div class="row">
             <div class="col-lg-4">
             <img src="details.png" class="img-responsive">
             </div>
+
+
 
             </div>
     </div>
