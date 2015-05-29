@@ -71,7 +71,7 @@ class StdOutListener(StreamListener):
             tf.write(json_data)
            
         self.num_of_tweets = self.num_of_tweets + 1
-        if self.num_of_tweets <5:
+        if self.num_of_tweets <10:
             return True
         else:
             tf.close()
@@ -88,7 +88,7 @@ if __name__ == '__main__':
     auth = OAuthHandler(consumer_key, consumer_secret)
     auth.set_access_token(access_token, access_token_secret)
     stream = Stream(auth, l)
-    stream.filter(track=['iphone,iPhone'],languages=['en'])
+    stream.filter(track=['iphone,iPhone, IPHONE, Iphone'],languages=['en'])
     sum = 0.0
     sum1 = 0.0
     layout = 3
@@ -100,7 +100,7 @@ if __name__ == '__main__':
     stop_words = [line.strip() for line in f]
     tweets_words = ['iphone', 'iPhone', 'amp']
     alist = []
-    tweets = []
+    tweets = set()
     horrible = []
     bad = []
     awesome = []
@@ -117,8 +117,8 @@ if __name__ == '__main__':
         tweet = TextBlob(iphonetweet["text"])
         
         sum1 = sum1 + tweet.word_counts['screen']
-        if tweet.sentiment.subjectivity != 0.0:
-            tweets.append(iphonetweet["text"])
+        if 0.5<= tweet.sentiment.subjectivity <= 1.0:
+            tweets.add(iphonetweet["text"])
             important_words = iphonetweet['text'].lower()
             my_text += important_words
             alist.append(tweet.sentiment.polarity)
@@ -146,6 +146,7 @@ if __name__ == '__main__':
                     horrible.append(tweet.sentiment.polarity)
             else:
                 neutral.append(tweet.sentiment.polarity)
+    
     total= len(alist)
 
     print tecPositive
@@ -209,6 +210,7 @@ if __name__ == '__main__':
    
     plt.clf()
 
+   
     n_groups = 9
     positives = []
     negatives = []
@@ -249,7 +251,7 @@ if __name__ == '__main__':
     plt.tight_layout()
     
     savefig('details.png')
-
+    
     plt.clf()
 
     x = [-0.2,1.2]
@@ -275,6 +277,8 @@ if __name__ == '__main__':
     plt.plot(x,y4)
     
     savefig('statistic.png')
+   
+   
    
     f = open('Output.html','w')
 
@@ -309,16 +313,16 @@ if __name__ == '__main__':
         <div class="col-lg-4">
         <h2>Latest tweets</h2>
             <ul class="list-group">
-        <li class="list-group-item">""" + tweets[len(tweets)-1]+"""</li>
-        <li class="list-group-item">""" + tweets[len(tweets)-2]+"""</li>
-        <li class="list-group-item">""" + tweets[len(tweets)-3]+"""</li>
-        <li class="list-group-item">""" + tweets[len(tweets)-4]+"""</li>
-        <li class="list-group-item">""" + tweets[len(tweets)-5]+"""</li>
-        <li class="list-group-item">""" + tweets[len(tweets)-6]+"""</li>
-        <li class="list-group-item">""" + tweets[len(tweets)-7]+"""</li>
-        <li class="list-group-item">""" + tweets[len(tweets)-8]+"""</li>
-        <li class="list-group-item">""" + tweets[len(tweets)-9]+"""</li>
-        <li class="list-group-item">""" + tweets[len(tweets)-10]+"""</li>
+        <li class="list-group-item">""" + tweets.pop()+"""</li>
+        <li class="list-group-item">""" + tweets.pop()+"""</li>
+        <li class="list-group-item">""" + tweets.pop()+"""</li>
+        <li class="list-group-item">""" + tweets.pop()+"""</li>
+        <li class="list-group-item">""" + tweets.pop()+"""</li>
+        <li class="list-group-item">""" + tweets.pop()+"""</li>
+        <li class="list-group-item">""" + tweets.pop()+"""</li>
+        <li class="list-group-item">""" + tweets.pop()+"""</li>
+        <li class="list-group-item">""" + tweets.pop()+"""</li>
+        <li class="list-group-item">""" + tweets.pop()+"""</li>
             </ul>
         </div>
         <div class="col-lg-3">
